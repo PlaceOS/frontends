@@ -17,7 +17,6 @@ Included in this repo is an alpine based Dockerfile.
 - If a repository commit is specified it will held at that commit.
 - Configuring the update frequency is done via a CRON in `PLACE_LOADER_CRON` environment variable, or the `--update-cron` flag. Use [crontab guru](https://crontab.guru/) to validate your CRONs!!!
 
-
 ### Routes
 
 - `GET ../frontends/v1/repository/:id/commits`: returns a list of commits
