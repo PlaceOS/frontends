@@ -1,0 +1,5 @@
+language: crystal
+
+script:
+  - crystal spec -v --error-trace
+  - crystal tool format --check

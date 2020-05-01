@@ -1,0 +1,23 @@
+name: frontend-loader
+version: 0.1.0
+crystal: 0.34.0
+license: MIT
+
+targets:
+  frontend-loader:
+    main: src/app.cr
+
+dependencies:
+  compiler:
+    github: placeos/compiler
+  core:
+    github: placeos/core
+    version: ~> 1.2
+  models:
+    github: placeos/models
+    version: ~> 1.0
+  tasker:
+    github: spider-gazelle/tasker
+
+authors:
+  - Caspian Baska <caspian@place.technology>
