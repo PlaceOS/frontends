@@ -30,6 +30,7 @@ module PlaceOS::Frontends
       )
     end
 
+    getter content_directory : String
     getter update_crontab : String
     private property update_cron : Tasker::CRON(Int32)? = nil
 
@@ -112,7 +113,7 @@ module PlaceOS::Frontends
       checkout_commit(repository_directory, repository_commit)
 
       # Grab commit for the cloned/pulled repository
-      current_commit = current_commit(repository_directory)
+      current_commit = current_commit(content_directory, repository_directory)
 
       if current_commit != repository_commit
         Log.info { {
@@ -136,8 +137,8 @@ module PlaceOS::Frontends
       Result::Success
     end
 
-    def self.current_commit(repository_directory : String)
-      Git.repository_commits(repository_directory, count: 1).first[:commit]
+    def self.current_commit(content_directory : String, repository_directory : String)
+      Git.repository_commits(File.join(content_directory, repository_directory), count: 1).first[:commit]
     end
 
     def self.unload(

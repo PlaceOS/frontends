@@ -13,8 +13,6 @@ module PlaceOS::Frontends
     it "loads frontends" do
       loader = Loader.new.start
 
-      loader.processed.size.should eq 1
-
       Dir.exists?(File.join(TEST_DIR, repository_folder_name)).should be_true
 
       loader.stop
@@ -22,8 +20,6 @@ module PlaceOS::Frontends
 
     it "removes frontends" do
       loader = Loader.new.start
-
-      loader.processed.size.should eq 1
 
       Dir.exists?(File.join(TEST_DIR, repository_folder_name)).should be_true
 
