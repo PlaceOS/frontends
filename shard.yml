@@ -19,5 +19,12 @@ dependencies:
   tasker:
     github: spider-gazelle/tasker
 
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+  faker:
+    github: askn/faker
+
+
 authors:
   - Caspian Baska <caspian@place.technology>
