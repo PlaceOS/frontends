@@ -1,5 +1,6 @@
 # PlaceOS Frontend Loader
 
+[![Build Status](https://travis-ci.com/PlaceOS/frontend-loader.svg?token=tDypQH5g9ptvYso68jVV&branch=master)](https://travis-ci.com/PlaceOS/frontend-loader)
 ![suprisingly, a frontend loader!](./logo.svg)
 
 An application Intended to be a sidecar to a webserver that listens for published front-end repositories and clones them to the webserver's static folder.
