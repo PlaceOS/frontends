@@ -17,10 +17,31 @@ Included in this repo is an alpine based Dockerfile.
 - If a repository commit is specified it will held at that commit.
 - Configuring the update frequency is done via a CRON in `PLACE_LOADER_CRON` environment variable, or the `--update-cron` flag. Use [crontab guru](https://crontab.guru/) to validate your CRONs!!!
 
+### Client
+
+Included is a simple client that can be configured via the `PLACE_LOADER_URI` environment variable.
+
+```crystal
+require "frontends/client"
+
+# One-shot
+commits = PlaceOS::Frontends::Client.client do |client|
+    client.commits("backoffice")
+end
+
+commits # => ["fac3caf3", ...]
+
+# Instance
+client = PlaceOS::Frontends::Client.new
+client.commits("backoffice") # => ["fac3caf3", ...]
+client.loaded # => {"backoffice" => "fac3caf3"...}
+client.close
+```
+
 ### Routes
 
-- `GET ../frontends/v1/repository/:id/commits`: returns a list of commits
-- `GET ../frontends/v1/repository/`: return the loaded frontends and their current commit
+- `GET ../frontends/v1/repositories/:id/commits`: returns a list of commits
+- `GET ../frontends/v1/repositories/`: return the loaded frontends and their current commit
 
 ## Contributing
 

@@ -10,17 +10,17 @@ module PlaceOS::Frontends
   class Client
     BASE_PATH   = "/api/frontends"
     API_VERSION = "v1"
+    DEFAULT_URI = URI.parse(ENV["PLACE_LOADER_URI"]? || "http://127.0.0.1:3000")
     getter api_version : String
 
     # Set the request_id on the client
     property request_id : String?
 
-    getter host : String = ENV["PLACE_FRONTENDS_HOST"]? || "127.0.0.1"
-    getter port : Int32 = (ENV["PLACE_FRONTENDS_PORT"]? || 3000).to_i
+    getter uri : String
 
     # A one-shot Core client
     def self.client(
-      uri : URI,
+      uri : URI = DEFAULT_URI,
       request_id : String? = nil,
       api_version : String = API_VERSION
     )
@@ -54,25 +54,11 @@ module PlaceOS::Frontends
     ###########################################################################
 
     def initialize(
-      uri : URI,
+      @uri : URI = DEFAULT_URI,
       @request_id : String? = nil,
       @api_version : String = API_VERSION
     )
-      uri_host = uri.host
-      @host = uri_host if uri_host
-      @port = uri.port || 3000
-      @connection = HTTP::Client.new(uri)
-    end
-
-    def initialize(
-      host : String? = nil,
-      port : Int32? = nil,
-      @request_id : String? = nil,
-      @api_version : String = API_VERSION
-    )
-      @host = host if host
-      @port = port if port
-      @connection = HTTP::Client.new(host: @host, port: @port)
+      @connection = HTTP::Client.new(@uri)
     end
 
     @connection : HTTP::Client?
@@ -109,7 +95,7 @@ module PlaceOS::Frontends
         response = connection_lock.synchronize do
           connection.{{method.id}}(path, headers, body)
         end
-        raise ClientError.from_response("#{@host}:#{@port}#{path}", response) unless response.success?
+        raise ClientError.from_response("#{uri}#{path}", response) unless response.success?
 
         response
       end
@@ -142,7 +128,7 @@ module PlaceOS::Frontends
       # unsuccessful.
       private def {{method.id}}(path, headers : HTTP::Headers? = nil, body : HTTP::Client::BodyType = nil)
         connection.{{method.id}}(path, headers, body) do |response|
-          raise ClientError.from_response("#{@host}:#{@port}#{path}", response) unless response.success?
+          raise ClientError.from_response("#{@uri}#{path}", response) unless response.success?
           yield response
         end
       end
