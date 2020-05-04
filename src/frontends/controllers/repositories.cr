@@ -14,7 +14,9 @@ module PlaceOS::Frontends::Api
 
     # Returns an array of commits for a repository
     get "/:folder_name/commits", :commits do
-      commits = Repositories.commits?(params["folder_name"])
+      count = (params["count"]? || 50).to_i
+      folder_name = params["folder_name"]
+      commits = Repositories.commits?(folder_name, count)
       head :not_found if commits.nil?
 
       render json: commits
@@ -35,10 +37,10 @@ module PlaceOS::Frontends::Api
       loaded
     end
 
-    def self.commits?(folder_name : String) : Array(String)?
+    def self.commits?(folder_name : String, count : Int32 = 50) : Array(NamedTuple(commit: String, date: String, author: String, subject: String))?
       path = File.expand_path(File.join(loader.content_directory, folder_name))
       if Dir.exists?(path)
-        Git.repository_commits(path).map { |entry| entry[:commit] }
+        Git.repository_commits(path, count)
       end
     end
   end
