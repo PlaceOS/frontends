@@ -60,6 +60,17 @@ module PlaceOS::Frontends
       end
     end
 
+    protected def repeating_update
+      # Pull all frontends
+      load_resources
+
+      # Pull www (content directory)
+      pull_result = Git.pull(".", content_directory)
+      unless pull_result[:exit_status] == 0
+        Log.error { "failed to pull www: #{pull_result}" }
+      end
+    end
+
     def process_resource(event) : Result
       repository = event[:resource]
 
