@@ -1,5 +1,5 @@
-name: frontend-loader
-version: 0.2.1
+name: frontends
+version: 0.2.2
 crystal: 0.34.0
 license: MIT
 
