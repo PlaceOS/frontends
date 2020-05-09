@@ -44,6 +44,7 @@ module PlaceOS::Frontends
     end
 
     def start
+      create_backoffice
       start_update_cron
       super
     end
@@ -53,22 +54,39 @@ module PlaceOS::Frontends
       super
     end
 
+    # Frontend loader implicitly and idempotently creates a backoffice repository
+    protected def create_backoffice
+      content_directory_parent = Path[content_directory].parent.to_s
+      Loader.clone_and_pull(
+        repository_folder_name: content_directory,
+        repository_uri: "https://github.com/PlaceOS/www-core",
+        content_directory: content_directory_parent,
+        username: username,
+        password: password,
+        depth: 1,
+      )
+    end
+
     protected def start_update_cron
       unless self.update_cron
         # Update the repositories periodically
-        self.update_cron = Tasker.instance.cron(update_crontab) { load_resources }
+        self.update_cron = Tasker.instance.cron(update_crontab) do
+          repeating_update
+        end
       end
     end
 
     protected def repeating_update
       # Pull all frontends
-      load_resources
+      loaded = load_resources
 
       # Pull www (content directory)
       pull_result = Git.pull(".", content_directory)
       unless pull_result[:exit_status] == 0
         Log.error { "failed to pull www: #{pull_result}" }
       end
+
+      loaded
     end
 
     def process_resource(event) : Result
@@ -209,10 +227,11 @@ module PlaceOS::Frontends
       repository_uri : String,
       content_directory : String,
       username : String? = nil,
-      password : String? = nil
+      password : String? = nil,
+      depth : Int32? = nil
     )
       Git.repo_lock(repository_folder_name).write do
-        clone_result = Git.clone(repository_folder_name, repository_uri, username, password, content_directory)
+        clone_result = Git.clone(repository_folder_name, repository_uri, username, password, content_directory, depth: depth)
         raise "failed to clone\n#{clone_result[:output]}" unless clone_result[:exit_status] == 0
 
         # Pull if already cloned and pull intended
