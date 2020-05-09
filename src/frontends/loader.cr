@@ -31,6 +31,8 @@ module PlaceOS::Frontends
     end
 
     getter content_directory : String
+    getter username : String?
+    private getter password : String?
     getter update_crontab : String
     private property update_cron : Tasker::CRON(Int32)? = nil
 

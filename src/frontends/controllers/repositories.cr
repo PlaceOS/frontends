@@ -30,11 +30,16 @@ module PlaceOS::Frontends::Api
     # Generates a hash of currently loaded repositories and their current commit
     def self.loaded_repositories : Hash(String, String)
       content_directory = loader.content_directory
-      loaded = Dir.entries(content_directory).reject(/^\./).each_with_object({} of String => String) do |folder_name, hash|
-        hash[folder_name] = Loader.current_commit(content_directory, folder_name)
-      end
-
-      loaded
+      Dir
+        .entries(content_directory)
+        .reject(/^\./)
+        .select { |e|
+          path = File.join(content_directory, e)
+          File.directory?(path) && File.exists?(File.join(path, ".git"))
+        }
+        .each_with_object({} of String => String) { |folder_name, hash|
+          hash[folder_name] = Loader.current_commit(content_directory, folder_name)
+        }
     end
 
     def self.commits?(folder_name : String, count : Int32 = 50) : Array(NamedTuple(commit: String, date: String, author: String, subject: String))?
