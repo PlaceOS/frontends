@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY shard.yml /build
 COPY shard.lock /build
-RUN shards install --production --static
+RUN CRFLAGS="--static" shards install --production --static
 
 COPY src /build/src
 RUN crystal build --error-trace --static --release --debug -o bin/frontend-loader src/app.cr
