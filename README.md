@@ -1,6 +1,6 @@
-# PlaceOS Frontend Loader
+# PlaceOS Frontends Service
 
-[![Build Status](https://travis-ci.com/PlaceOS/frontend-loader.svg?token=tDypQH5g9ptvYso68jVV&branch=master)](https://travis-ci.com/PlaceOS/frontend-loader)
+[![Build Status](https://travis-ci.com/PlaceOS/frontends.svg?token=tDypQH5g9ptvYso68jVV&branch=master)](https://travis-ci.com/PlaceOS/frontends)
 ![suprisingly, a frontend loader!](./logo.svg)
 
 An application Intended to be a sidecar to a webserver that listens for published front-end repositories and clones them to the webserver's static folder.
@@ -45,7 +45,7 @@ client.close
 
 ## Contributing
 
-1. [Fork it](https://github.com/placeos/frontend-loader/fork)
+1. [Fork it](https://github.com/placeos/frontends/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
