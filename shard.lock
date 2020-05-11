@@ -58,7 +58,7 @@ shards:
 
   driver:
     github: placeos/driver
-    version: 2.0.3
+    version: 2.0.4
 
   etcd:
     github: place-labs/crystal-etcd
