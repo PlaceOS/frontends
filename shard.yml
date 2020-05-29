@@ -1,21 +1,21 @@
-name: frontends
-version: 0.4.2
+name: placeos-frontends
+version: 0.5.0
 crystal: 0.34.0
 license: MIT
 
 targets:
-  frontend-loader:
+  frontends:
     main: src/app.cr
 
 dependencies:
   compiler:
     github: placeos/compiler
-  core:
+  placeos-core:
     github: placeos/core
-    version: ~> 1.2
-  models:
+    version: ~> 2.0
+  placeos-models:
     github: placeos/models
-    version: ~> 1.0
+    version: ~> 2.0
   tasker:
     github: spider-gazelle/tasker
 
@@ -24,7 +24,6 @@ development_dependencies:
     github: crystal-ameba/ameba
   faker:
     github: askn/faker
-
 
 authors:
   - Caspian Baska <caspian@place.technology>

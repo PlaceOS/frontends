@@ -1,7 +1,7 @@
 require "spec"
 
 require "file_utils"
-require "models/spec/generator"
+require "placeos-models/spec/generator"
 
 require "../src/frontends"
 

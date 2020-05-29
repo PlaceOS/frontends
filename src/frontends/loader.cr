@@ -1,8 +1,8 @@
 require "compiler/drivers/git_commands"
-require "core/resource"
 require "file_utils"
 require "habitat"
-require "models/repository"
+require "placeos-core/resource"
+require "placeos-models/repository"
 require "tasker"
 
 require "./constants"
