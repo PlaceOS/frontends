@@ -3,7 +3,7 @@ require "spec"
 require "file_utils"
 require "placeos-models/spec/generator"
 
-require "../src/frontends"
+require "../src/placeos-frontends"
 
 TEST_DIR = "test-www"
 

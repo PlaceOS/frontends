@@ -1,6 +1,6 @@
 require "option_parser"
 
-require "./frontends/constants"
+require "./placeos-frontends/constants"
 
 # Server defaults
 host = ENV["PLACE_LOADER_HOST"]? || "127.0.0.1"

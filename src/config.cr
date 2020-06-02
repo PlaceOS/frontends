@@ -3,7 +3,7 @@ require "action-controller"
 require "log_helper"
 
 # Application code
-require "./frontends"
+require "./placeos-frontends"
 
 # Server required after application controllers
 require "action-controller/server"
