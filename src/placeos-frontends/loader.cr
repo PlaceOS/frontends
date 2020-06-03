@@ -46,7 +46,7 @@ module PlaceOS::Frontends
     end
 
     def start
-      create_backoffice
+      create_base_www
       start_update_cron
       super
     end
@@ -56,8 +56,8 @@ module PlaceOS::Frontends
       super
     end
 
-    # Frontend loader implicitly and idempotently creates a backoffice repository
-    protected def create_backoffice
+    # Frontend loader implicitly and idempotently creates a base www
+    protected def create_base_www
       content_directory_parent = Path[content_directory].parent.to_s
       Loader.clone_and_pull(
         repository_folder_name: content_directory,

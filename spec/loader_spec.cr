@@ -10,10 +10,10 @@ module PlaceOS::Frontends
       repository = example_repository
     end
 
-    it "implicity loads backoffice" do
+    it "implicity loads www base" do
       loader = Loader.new.start
 
-      Dir.exists?(File.join(TEST_DIR, "backoffice")).should be_true
+      Dir.exists?(File.join(TEST_DIR, "login")).should be_true
 
       loader.stop
     end
