@@ -113,6 +113,10 @@ module PlaceOS::Frontends
           content_directory: @content_directory,
         )
       end.as(Result)
+    rescue e
+      # Add cloning errors
+      model = event[:resource]
+      raise Core::Resource::ProcessingError.new(model.name, "#{model.attributes} #{e.inspect_with_backtrace}")
     end
 
     def self.load(
