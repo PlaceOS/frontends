@@ -38,7 +38,7 @@ module PlaceOS::Frontends::Api
           File.directory?(path) && File.exists?(File.join(path, ".git"))
         }
         .each_with_object({} of String => String) { |folder_name, hash|
-          hash[folder_name] = Loader.current_commit(content_directory, folder_name)
+          hash[folder_name] = Loader.current_commit(repository_directory: folder_name, content_directory: content_directory)
         }
     end
 
