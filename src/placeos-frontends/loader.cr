@@ -113,9 +113,6 @@ module PlaceOS::Frontends
           content_directory: @content_directory,
         )
       end.as(Result)
-    rescue e
-      # Add cloning errors
-      raise Core::Resource::ProcessingError.new(event[:resource].name, "#{e} #{e.message}")
     end
 
     def self.load(
