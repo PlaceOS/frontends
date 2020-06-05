@@ -145,7 +145,7 @@ module PlaceOS::Frontends
       checkout_commit(repository_directory, repository_commit)
 
       # Grab commit for the cloned/pulled repository
-      current_commit = current_commit(content_directory, repository_directory)
+      current_commit = current_commit(repository_directory: repository_directory)
 
       if current_commit != repository_commit
         Log.info { {
@@ -169,8 +169,9 @@ module PlaceOS::Frontends
       Result::Success
     end
 
-    def self.current_commit(content_directory : String, repository_directory : String)
-      Git.repository_commits(File.join(content_directory, repository_directory), count: 1).first[:commit]
+    def self.current_commit(repository_directory : String, content_directory : String? = nil)
+      path = content_directory.nil? ? repository_directory : File.join(content_directory, repository_directory)
+      Git.repository_commits(path, count: 1).first[:commit]
     end
 
     def self.unload(
@@ -218,7 +219,7 @@ module PlaceOS::Frontends
       commit = "master" if commit == "HEAD"
 
       result = Git.operation_lock(repository_directory).synchronize do
-        ExecFrom.exec_from(repository_directory, "git", {"checkout", commit})
+        ExecFrom.exec_from(repository_directory, "git", {"checkout", commit}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
       end
 
       exit_code = result[:exit_code]
