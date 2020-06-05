@@ -6,7 +6,7 @@ shards:
 
   action-controller:
     github: spider-gazelle/action-controller
-    version: 3.1.2
+    version: 3.1.3
 
   active-model:
     github: spider-gazelle/active-model
@@ -90,7 +90,7 @@ shards:
 
   jwt:
     github: crystal-community/jwt
-    version: 1.4.0
+    version: 1.4.1
 
   log_helper:
     github: spider-gazelle/log_helper
@@ -110,11 +110,11 @@ shards:
 
   placeos-core:
     github: placeos/core
-    version: 2.0.0
+    version: 2.2.0
 
   placeos-models:
     github: placeos/models
-    version: 2.0.0
+    version: 2.0.2
 
   pool:
     github: ysbaddaden/pool
@@ -158,7 +158,7 @@ shards:
 
   ssh2:
     github: spider-gazelle/ssh2.cr
-    version: 1.3.1
+    version: 1.3.3
 
   tasker:
     github: spider-gazelle/tasker
