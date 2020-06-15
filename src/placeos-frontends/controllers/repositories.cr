@@ -1,4 +1,4 @@
-require "compiler/drivers/git_commands"
+require "placeos-compiler/drivers/git_commands"
 
 require "./base"
 require "../loader"

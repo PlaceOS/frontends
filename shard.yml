@@ -1,6 +1,6 @@
 name: placeos-frontends
-version: 0.6.4
-crystal: 0.34.0
+version: 0.7.0
+crystal: 0.35.0
 license: MIT
 
 targets:
@@ -8,11 +8,12 @@ targets:
     main: src/app.cr
 
 dependencies:
-  compiler:
+  placeos-compiler:
     github: placeos/compiler
+    version: ~> 2.0
   placeos-core:
     github: placeos/core
-    version: ~> 2.0
+    version: ~> 2.3
   placeos-models:
     github: placeos/models
     version: ~> 2.0
