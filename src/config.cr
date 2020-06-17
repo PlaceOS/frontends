@@ -18,13 +18,13 @@ ActionController::Server.before(
 
 # Configure logging
 log_level = PROD ? Log::Severity::Info : Log::Severity::Debug
-Log.builder.bind "*", log_level, PlaceOS::Frontends::LOG_BACKEND
+::Log.setup "*", log_level, PlaceOS::Frontends::LOG_BACKEND
 
 # Allow signals to change the log level at run-time
 logging = Proc(Signal, Nil).new do |signal|
   level = signal.usr1? ? Log::Severity::Debug : Log::Severity::Info
   puts " > Log level changed to #{level}"
-  Log.builder.bind "frontends.*", level, PlaceOS::Frontends::LOG_BACKEND
+  ::Log.for("frontends.*").level = level
   signal.ignore
 end
 
