@@ -8,7 +8,7 @@ require "./placeos-frontends"
 # Server required after application controllers
 require "action-controller/server"
 
-PROD = ENV["ENV"]? == "PROD"
+PROD = ENV["SG_ENV"]? == "production"
 
 # Add handlers that should run before your application
 ActionController::Server.before(
