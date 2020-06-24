@@ -1,6 +1,6 @@
 name: placeos-frontends
-version: 0.7.1
-crystal: 0.35.0
+version: 0.7.2
+crystal: 0.35.1
 license: MIT
 
 targets:

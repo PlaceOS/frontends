@@ -34,7 +34,7 @@ module PlaceOS::Frontends
     getter username : String?
     private getter password : String?
     getter update_crontab : String
-    private property update_cron : Tasker::CRON(Int32)? = nil
+    private property update_cron : Tasker::CRON(UInt64)? = nil
 
     def initialize(
       @content_directory : String = Loader.settings.content_directory,
