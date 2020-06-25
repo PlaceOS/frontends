@@ -19,6 +19,8 @@ dependencies:
     version: ~> 2.0
   tasker:
     github: spider-gazelle/tasker
+  secrets-env:
+    github: place-labs/secrets-env
 
 development_dependencies:
   ameba:

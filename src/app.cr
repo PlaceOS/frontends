@@ -1,10 +1,10 @@
 require "option_parser"
 
-require "./placeos-frontends/constants"
+require "./constants"
 
 # Server defaults
-host = ENV["PLACE_LOADER_HOST"]? || "127.0.0.1"
-port = (ENV["PLACE_LOADER_PORT"]? || 3000).to_i
+host = PlaceOS::Frontends::HOST
+port = PlaceOS::Frontends::PORT
 
 # Application configuration
 content_directory = nil

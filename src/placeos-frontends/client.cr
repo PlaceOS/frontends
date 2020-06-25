@@ -3,7 +3,6 @@ require "json"
 require "mutex"
 require "uri"
 
-require "./constants"
 require "./error"
 
 module PlaceOS::Frontends

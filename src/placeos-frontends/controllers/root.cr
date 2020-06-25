@@ -1,5 +1,4 @@
 require "./base"
-require "../constants"
 
 module PlaceOS::Frontends::Api
   class Root < Base

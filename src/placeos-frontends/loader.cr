@@ -5,8 +5,6 @@ require "placeos-core/resource"
 require "placeos-models/repository"
 require "tasker"
 
-require "./constants"
-
 module PlaceOS::Frontends
   class Loader < Core::Resource(Model::Repository)
     Log = ::Log.for("frontends.loader")
@@ -14,10 +12,10 @@ module PlaceOS::Frontends
     private alias Git = PlaceOS::Drivers::GitCommands
 
     Habitat.create do
-      setting content_directory : String = ENV["PLACE_LOADER_WWW"]? || "www"
-      setting update_crontab : String = ENV["PLACE_LOADER_CRON"]? || "0 * * * *"
-      setting username : String? = ENV["PLACE_LOADER_GIT_USER"]?
-      setting password : String? = ENV["PLACE_LOADER_GIT_PASS"]?
+      setting content_directory : String = WWW
+      setting update_crontab : String = CRON
+      setting username : String? = GIT_USER
+      setting password : String? = GIT_PASS
     end
 
     @@instace : Loader? = nil
