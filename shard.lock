@@ -118,11 +118,11 @@ shards:
 
   placeos-driver:
     git: https://github.com/placeos/driver.git
-    version: 3.4.1
+    version: 3.4.3
 
   placeos-models:
     git: https://github.com/placeos/models.git
-    version: 3.0.1
+    version: 3.0.5
 
   pool:
     git: https://github.com/ysbaddaden/pool.git
