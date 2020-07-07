@@ -7,7 +7,8 @@ require "tasker"
 
 module PlaceOS::Frontends
   class Loader < Core::Resource(Model::Repository)
-    Log = ::Log.for("frontends.loader")
+    Log = ::Log.for(self)
+
     private alias Result = Core::Resource::Result
     private alias Git = PlaceOS::Compiler::GitCommands
 
@@ -127,8 +128,14 @@ module PlaceOS::Frontends
       repository_folder_name = repository.folder_name.as(String)
       repository_uri = repository.uri.as(String)
       repository_commit = repository.commit_hash.as(String)
+      branch = repository.branch.as(String)
 
       repository_directory = File.expand_path(File.join(content_directory, repository_folder_name))
+
+      if repository.uri_changed? && Dir.exists?(repository_directory)
+        # Reload the repository to prevent conflicting histories
+        unload(repository, content_directory)
+      end
 
       # Clone and pull the repository
       clone_and_pull(
@@ -137,15 +144,17 @@ module PlaceOS::Frontends
         content_directory: content_directory,
         username: username,
         password: password,
+        branch: branch,
       )
 
       # Checkout repository to commit on the model
-      checkout_commit(repository_directory, repository_commit)
+      checkout_commit(repository_directory, repository_commit, branch)
 
       # Grab commit for the cloned/pulled repository
       current_commit = current_commit(repository_directory: repository_directory)
 
-      if current_commit != repository_commit
+      # Update model commit if the repository is not held at HEAD
+      if current_commit != repository_commit && repository_commit != "HEAD"
         Log.info { {
           message:           "updating commit on Repository document",
           current_commit:    current_commit,
@@ -154,14 +163,16 @@ module PlaceOS::Frontends
         } }
 
         # Refresh the repository model commit hash
+        repository_commit = current_commit
         repository.update_fields(commit_hash: current_commit)
       end
 
       Log.info { {
-        message:    "loaded repository",
-        commit:     current_commit,
-        repository: repository_folder_name,
-        uri:        repository_uri,
+        message:           "loaded repository",
+        commit:            current_commit,
+        repository:        repository_folder_name,
+        repository_commit: current_commit,
+        uri:               repository_uri,
       } }
 
       Result::Success
@@ -212,11 +223,12 @@ module PlaceOS::Frontends
 
     # Set repository to a specific commit
     #
-    def self.checkout_commit(repository_directory : String, commit : String = "HEAD")
+    def self.checkout_commit(repository_directory : String, commit : String = "HEAD", branch : String = "master")
       # Cannot checkout HEAD in a detached state
-      commit = "master" if commit == "HEAD"
+      commit = branch if commit == "HEAD"
 
-      result = Git.operation_lock(repository_directory).synchronize do
+      result = Git.repo_operation(repository_directory) do
+        ExecFrom.exec_from(repository_directory, "git", {"fetch", "--all"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
         ExecFrom.exec_from(repository_directory, "git", {"checkout", commit}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
       end
 
@@ -230,10 +242,20 @@ module PlaceOS::Frontends
       content_directory : String,
       username : String? = nil,
       password : String? = nil,
-      depth : Int32? = nil
+      depth : Int32? = nil,
+      branch : String = "master"
     )
       Git.repo_lock(repository_folder_name).write do
-        clone_result = Git.clone(repository_folder_name, repository_uri, username, password, content_directory, depth: depth)
+        clone_result = Git.clone(
+          repository_folder_name,
+          repository_uri,
+          username,
+          password,
+          content_directory,
+          depth: depth,
+          branch: branch,
+        )
+
         raise "failed to clone\n#{clone_result[:output]}" unless clone_result[:exit_status] == 0
 
         # Pull if already cloned and pull intended
