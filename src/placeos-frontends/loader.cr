@@ -1,6 +1,6 @@
 require "file_utils"
 require "habitat"
-require "placeos-compiler/drivers/git_commands"
+require "placeos-compiler/git_commands"
 require "placeos-core/resource"
 require "placeos-models/repository"
 require "tasker"
@@ -9,7 +9,7 @@ module PlaceOS::Frontends
   class Loader < Core::Resource(Model::Repository)
     Log = ::Log.for("frontends.loader")
     private alias Result = Core::Resource::Result
-    private alias Git = PlaceOS::Drivers::GitCommands
+    private alias Git = PlaceOS::Compiler::GitCommands
 
     Habitat.create do
       setting content_directory : String = WWW

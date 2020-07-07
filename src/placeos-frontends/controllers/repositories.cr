@@ -1,4 +1,4 @@
-require "placeos-compiler/drivers/git_commands"
+require "placeos-compiler/git_commands"
 
 require "./base"
 require "../loader"
@@ -8,7 +8,7 @@ module PlaceOS::Frontends::Api
     base "/api/frontends/v1/repositories"
     Log = ::Log.for("frontends.api.repositories")
 
-    private alias Git = PlaceOS::Drivers::GitCommands
+    private alias Git = PlaceOS::Compiler::GitCommands
 
     class_property loader : Loader = Loader.instance
 
