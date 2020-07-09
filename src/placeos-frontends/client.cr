@@ -52,6 +52,14 @@ module PlaceOS::Frontends
       Array(NamedTuple(commit: String, date: String, author: String, subject: String)).from_json(response.body)
     end
 
+    # Branches for a frontend folder
+    def commits(folder_name : String)
+      path = "/repositories/#{folder_name}/branches"
+      response = get(path)
+
+      Array(String).from_json(response.body)
+    end
+
     ###########################################################################
 
     def initialize(
