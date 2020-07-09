@@ -53,7 +53,7 @@ module PlaceOS::Frontends
     end
 
     # Branches for a frontend folder
-    def commits(folder_name : String)
+    def branches(folder_name : String)
       path = "/repositories/#{folder_name}/branches"
       response = get(path)
 
