@@ -6,7 +6,7 @@ require "../loader"
 module PlaceOS::Frontends::Api
   class Repositories < Base
     base "/api/frontends/v1/repositories"
-    Log = ::Log.for("frontends.api.repositories")
+    Log = ::Log.for(self)
 
     private alias Git = PlaceOS::Compiler::GitCommands
 
@@ -20,6 +20,15 @@ module PlaceOS::Frontends::Api
       head :not_found if commits.nil?
 
       render json: commits
+    end
+
+    # Returns an array of branches for a repository
+    get "/:folder_name/branches", :branches do
+      folder_name = params["folder_name"]
+      branches = Repositories.branches?(folder_name)
+      head :not_found if branches.nil?
+
+      render json: branches
     end
 
     # Returns a hash of folder name to commits
@@ -40,6 +49,19 @@ module PlaceOS::Frontends::Api
         .each_with_object({} of String => String) { |folder_name, hash|
           hash[folder_name] = Loader.current_commit(repository_directory: folder_name, content_directory: content_directory)
         }
+    end
+
+    def self.branches?(folder_name : String) : Array(String)?
+      path = File.expand_path(File.join(loader.content_directory, folder_name))
+      if Dir.exists?(path)
+        Git.repo_operation(path) do
+          ExecFrom.exec_from(path, "git", {"fetch", "--all"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
+          result = ExecFrom.exec_from(path, "git", {"branch", "-r"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
+          if result[:exit_code] == 0
+            result[:output].to_s.lines.map(&.strip.lchop("origin/")).sort.uniq.reject(/HEAD/)
+          end
+        end
+      end
     end
 
     def self.commits?(folder_name : String, count : Int32 = 50) : Array(NamedTuple(commit: String, date: String, author: String, subject: String))?
