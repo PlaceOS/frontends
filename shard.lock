@@ -46,7 +46,7 @@ shards:
 
   debug:
     git: https://github.com/Sija/debug.cr.git
-    version: 1.1.0
+    version: 2.0.0
 
   etcd:
     git: https://github.com/place-labs/crystal-etcd.git
@@ -154,7 +154,7 @@ shards:
 
   rethinkdb:
     git: https://github.com/kingsleyh/crystal-rethinkdb.git
-    version: 0.2.0
+    version: 0.2.1
 
   rethinkdb-orm:
     git: https://github.com/spider-gazelle/rethinkdb-orm.git
@@ -182,7 +182,7 @@ shards:
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
-    version: 2.0.0
+    version: 2.0.1
 
   tokenizer:
     git: https://github.com/spider-gazelle/tokenizer.git
