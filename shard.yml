@@ -1,6 +1,6 @@
 name: placeos-frontends
-version: 0.10.2
-crystal: 0.35.1
+version: 0.10.3
+crystal: ~> 0.35
 license: MIT
 
 targets:
@@ -12,13 +12,13 @@ dependencies:
     github: placeos/compiler
     version: ~> 3.0
 
-  placeos-core:
-    github: placeos/core
-    version: ~> 2.5
-
   placeos-models:
     github: placeos/models
-    version: ~> 3.0
+    version: ~> 4.0
+
+  placeos-resource:
+    github: place-labs/resource
+    version: ~> 1
 
   secrets-env:
     github: place-labs/secrets-env

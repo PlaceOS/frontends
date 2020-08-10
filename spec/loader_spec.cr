@@ -3,7 +3,6 @@ require "./helper"
 module PlaceOS::Frontends
   describe Loader do
     repository = example_repository
-    repository_folder_name = repository.folder_name.as(String)
 
     Spec.before_each do
       reset
@@ -21,7 +20,7 @@ module PlaceOS::Frontends
     it "loads frontends" do
       loader = Loader.new.start
 
-      Dir.exists?(File.join(TEST_DIR, repository_folder_name)).should be_true
+      Dir.exists?(File.join(TEST_DIR, repository.folder_name)).should be_true
 
       loader.stop
     end
@@ -29,7 +28,7 @@ module PlaceOS::Frontends
     it "removes frontends" do
       loader = Loader.new.start
 
-      expected_path = File.join(TEST_DIR, repository_folder_name)
+      expected_path = File.join(TEST_DIR, repository.folder_name)
 
       Dir.exists?(expected_path).should be_true
 
@@ -44,7 +43,7 @@ module PlaceOS::Frontends
     it "supports changing a uri" do
       loader = Loader.new.start
 
-      expected_path = File.join(TEST_DIR, repository_folder_name)
+      expected_path = File.join(TEST_DIR, repository.folder_name)
       expected_uri = "https://github.com/place-labs/backoffice-alpha"
 
       Dir.exists?(expected_path).should be_true

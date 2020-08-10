@@ -1,15 +1,15 @@
 require "file_utils"
 require "habitat"
 require "placeos-compiler/git_commands"
-require "placeos-core/resource"
 require "placeos-models/repository"
+require "placeos-resource"
 require "tasker"
 
 module PlaceOS::Frontends
-  class Loader < Core::Resource(Model::Repository)
+  class Loader < Resource(Model::Repository)
     Log = ::Log.for(self)
 
-    private alias Result = Core::Resource::Result
+    private alias Result = Resource::Result
     private alias Git = PlaceOS::Compiler::GitCommands
 
     Habitat.create do
@@ -97,7 +97,7 @@ module PlaceOS::Frontends
       return Result::Skipped unless repository.repo_type == Model::Repository::Type::Interface
 
       case event[:action]
-      when Action::Created, Action::Updated
+      in Action::Created, Action::Updated
         # Load the repository
         Loader.load(
           repository: repository,
@@ -105,17 +105,17 @@ module PlaceOS::Frontends
           username: @username,
           password: @password,
         )
-      when Action::Deleted
+      in Action::Deleted
         # Unload the repository
         Loader.unload(
           repository: repository,
           content_directory: @content_directory,
         )
-      end.as(Result)
+      end
     rescue e
       # Add cloning errors
       model = event[:resource]
-      raise Core::Resource::ProcessingError.new(model.name, "#{model.attributes} #{e.inspect_with_backtrace}")
+      raise Resource::ProcessingError.new(model.name, "#{model.attributes} #{e.inspect_with_backtrace}")
     end
 
     def self.load(
@@ -124,13 +124,9 @@ module PlaceOS::Frontends
       username : String? = nil,
       password : String? = nil
     )
+      repository_commit = repository.commit_hash
       content_directory = File.expand_path(content_directory)
-      repository_folder_name = repository.folder_name.as(String)
-      repository_uri = repository.uri.as(String)
-      repository_commit = repository.commit_hash.as(String)
-      branch = repository.branch.as(String)
-
-      repository_directory = File.expand_path(File.join(content_directory, repository_folder_name))
+      repository_directory = File.expand_path(File.join(content_directory, repository.folder_name))
 
       if repository.uri_changed? && Dir.exists?(repository_directory)
         # Reload the repository to prevent conflicting histories
@@ -139,27 +135,26 @@ module PlaceOS::Frontends
 
       # Clone and pull the repository
       clone_and_pull(
-        repository_folder_name: repository_folder_name,
-        repository_uri: repository_uri,
+        repository_folder_name: repository.folder_name,
+        repository_uri: repository.uri,
         content_directory: content_directory,
         username: username,
         password: password,
-        branch: branch,
+        branch: repository.branch,
       )
 
       # Checkout repository to commit on the model
-      checkout_commit(repository_directory, repository_commit, branch)
+      checkout_commit(repository_directory, repository_commit, repository.branch)
 
       # Grab commit for the cloned/pulled repository
       current_commit = current_commit(repository_directory: repository_directory)
 
       # Update model commit if the repository is not held at HEAD
       if current_commit != repository_commit && repository_commit != "HEAD"
-        Log.info { {
-          message:           "updating commit on Repository document",
-          current_commit:    current_commit,
-          repository_commit: repository_commit,
-          folder_name:       repository_folder_name,
+        Log.info { {message:           "updating commit on Repository document",
+                    current_commit:    current_commit,
+                    repository_commit: repository_commit,
+                    folder_name:       repository.folder_name,
         } }
 
         # Refresh the repository model commit hash
@@ -170,9 +165,9 @@ module PlaceOS::Frontends
       Log.info { {
         message:           "loaded repository",
         commit:            current_commit,
-        repository:        repository_folder_name,
-        repository_commit: current_commit,
-        uri:               repository_uri,
+        repository:        repository.folder_name,
+        repository_commit: repository_commit,
+        uri:               repository.uri,
       } }
 
       Result::Success
@@ -187,23 +182,22 @@ module PlaceOS::Frontends
       repository : Model::Repository,
       content_directory : String
     )
-      repository_folder_name = repository.folder_name.as(String)
       content_directory = File.expand_path(content_directory)
-      repository_dir = File.expand_path(File.join(content_directory, repository_folder_name))
+      repository_dir = File.expand_path(File.join(content_directory, repository.folder_name))
 
       # Ensure we `rmdir` a sane folder
       # - don't delete root
       # - don't delete working directory
       safe_directory = repository_dir.starts_with?(content_directory) &&
                        repository_dir != "/" &&
-                       !repository_folder_name.empty? &&
-                       !repository_folder_name.includes?("/") &&
-                       !repository_folder_name.includes?(".")
+                       !repository.folder_name.empty? &&
+                       !repository.folder_name.includes?("/") &&
+                       !repository.folder_name.includes?(".")
 
       if !safe_directory
         Log.error { {
           message:           "attempted to delete unsafe directory",
-          repository_folder: repository_folder_name,
+          repository_folder: repository.folder_name,
         } }
         Result::Error
       else
@@ -246,6 +240,13 @@ module PlaceOS::Frontends
       branch : String = "master"
     )
       Git.repo_lock(repository_folder_name).write do
+        Log.info { {
+          message:    "cloning repository",
+          repository: repository_folder_name,
+          branch:     branch,
+          uri:        repository_uri,
+        } }
+
         clone_result = Git.clone(
           repository_folder_name,
           repository_uri,
@@ -260,6 +261,12 @@ module PlaceOS::Frontends
 
         # Pull if already cloned and pull intended
         if clone_result[:output].includes?("already exists")
+          Log.info { {
+            message:    "pulling repository",
+            repository: repository_folder_name,
+            branch:     branch,
+            uri:        repository_uri,
+          } }
           pull_result = Git.pull(repository_folder_name, content_directory)
           raise "failed to pull\n#{pull_result}" unless pull_result[:exit_status] == 0
         end
