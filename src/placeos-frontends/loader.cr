@@ -9,7 +9,6 @@ module PlaceOS::Frontends
   class Loader < Resource(Model::Repository)
     Log = ::Log.for(self)
 
-    private alias Result = Resource::Result
     private alias Git = PlaceOS::Compiler::GitCommands
 
     Habitat.create do
@@ -90,13 +89,13 @@ module PlaceOS::Frontends
       loaded
     end
 
-    def process_resource(event) : Result
-      repository = event[:resource]
+    def process_resource(action : Resource::Action, resource : Model::Repository) : Resource::Result
+      repository = resource
 
       # Only consider Interface Repositories
-      return Result::Skipped unless repository.repo_type == Model::Repository::Type::Interface
+      return Resource::Result::Skipped unless repository.repo_type == Model::Repository::Type::Interface
 
-      case event[:action]
+      case action
       in Action::Created, Action::Updated
         # Load the repository
         Loader.load(
@@ -114,8 +113,7 @@ module PlaceOS::Frontends
       end
     rescue e
       # Add cloning errors
-      model = event[:resource]
-      raise Resource::ProcessingError.new(model.name, "#{model.attributes} #{e.inspect_with_backtrace}")
+      raise Resource::ProcessingError.new(resource.name, "#{resource.attributes} #{e.inspect_with_backtrace}")
     end
 
     def self.load(
@@ -170,7 +168,7 @@ module PlaceOS::Frontends
         uri:               repository.uri,
       } }
 
-      Result::Success
+      Resource::Result::Success
     end
 
     def self.current_commit(repository_directory : String, content_directory : String? = nil)
@@ -199,18 +197,18 @@ module PlaceOS::Frontends
           message:           "attempted to delete unsafe directory",
           repository_folder: repository.folder_name,
         } }
-        Result::Error
+        Resource::Result::Error
       else
         if Dir.exists?(repository_dir)
           begin
             FileUtils.rm_rf(repository_dir)
-            Result::Success
+            Resource::Result::Success
           rescue
             Log.error { "failed to remove #{repository_dir}" }
-            Result::Error
+            Resource::Result::Error
           end
         else
-          Result::Skipped
+          Resource::Result::Skipped
         end
       end
     end
