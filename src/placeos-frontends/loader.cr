@@ -18,10 +18,8 @@ module PlaceOS::Frontends
       setting password : String? = GIT_PASS
     end
 
-    @@instace : Loader? = nil
-
-    def self.instance
-      @@instance ||= Loader.new(
+    class_getter instance : Loader do
+      Loader.new(
         content_directory: settings.content_directory,
         username: settings.username,
         password: settings.password,
