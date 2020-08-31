@@ -65,27 +65,30 @@ module PlaceOS::Frontends
 
     describe "branches" do
       it "loads a specific branch" do
-        repository = example_branched_repository("test")
+        branch = "build-alpha"
+        repository = example_repository(branch: branch)
 
         loader = Loader.new.start
-        path = File.join(TEST_DIR, "ulid")
+        path = File.join(TEST_DIR, "backoffice")
 
         Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq "test"
+        Compiler::GitCommands.current_branch(path).should eq branch
 
         loader.stop
       end
 
       it "switches branches" do
-        repository = example_branched_repository("test")
+        branch = "build-alpha"
+        updated_branch = "master"
+        repository = example_repository(branch: branch)
 
         loader = Loader.new.start
-        path = File.join(TEST_DIR, "ulid")
+        path = File.join(TEST_DIR, "backoffice")
 
         Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq "test"
+        Compiler::GitCommands.current_branch(path).should eq branch
 
-        repository.branch = "master"
+        repository.branch = updated_branch
         repository.save!
 
         after_load = loader.processed.size
@@ -94,7 +97,7 @@ module PlaceOS::Frontends
         end
 
         Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq "master"
+        Compiler::GitCommands.current_branch(path).should eq updated_branch
 
         loader.stop
       end
