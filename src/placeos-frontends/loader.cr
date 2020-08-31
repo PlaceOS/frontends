@@ -61,6 +61,7 @@ module PlaceOS::Frontends
         content_directory: content_directory_parent,
         username: username,
         password: password,
+        branch: "master",
         depth: 1,
       )
     end
@@ -161,6 +162,7 @@ module PlaceOS::Frontends
       Log.info { {
         message:           "loaded repository",
         commit:            current_commit,
+        branch:            repository.branch,
         repository:        repository.folder_name,
         repository_commit: repository_commit,
         uri:               repository.uri,
@@ -230,10 +232,10 @@ module PlaceOS::Frontends
       repository_folder_name : String,
       repository_uri : String,
       content_directory : String,
+      branch : String,
       username : String? = nil,
       password : String? = nil,
-      depth : Int32? = nil,
-      branch : String = "master"
+      depth : Int32? = nil
     )
       Git.repo_lock(repository_folder_name).write do
         Log.info { {
@@ -263,7 +265,15 @@ module PlaceOS::Frontends
             branch:     branch,
             uri:        repository_uri,
           } }
-          pull_result = Git.pull(repository_folder_name, content_directory)
+          path = File.join(content_directory, repository_folder_name)
+
+          # Ensure branch is locally present
+          Git.fetch(path)
+
+          # Checkout the branch first
+          Git.checkout_branch(branch, path)
+
+          pull_result = Git.pull(repository_folder_name, content_directory, branch)
           raise "failed to pull\n#{pull_result}" unless pull_result[:exit_status] == 0
         end
       end

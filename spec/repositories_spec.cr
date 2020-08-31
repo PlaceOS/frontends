@@ -12,7 +12,7 @@ module PlaceOS::Frontends::Api
     end
 
     it "lists branches for a loaded repository" do
-      repository = example_branched_repository
+      repository = example_repository
       Api::Repositories.loader = Loader.new.start
 
       branches = Api::Repositories.branches?(repository.folder_name)

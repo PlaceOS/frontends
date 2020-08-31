@@ -22,31 +22,15 @@ def reset
   FileUtils.rm_rf(TEST_DIR)
 end
 
-def example_branched_repository(branch : String = "test")
-  existing = PlaceOS::Model::Repository.where(folder_name: "ulid").first?
-  if existing
-    unless existing.branch == branch
-      existing.branch = branch
-      existing.save!
-    end
-
-    existing
-  else
-    repository = PlaceOS::Model::Generator.repository(type: PlaceOS::Model::Repository::Type::Interface)
-    repository.uri = "https://github.com/place-labs/ulid"
-    repository.name = "ulid"
-    repository.folder_name = "ulid"
-    repository.branch = branch
-
-    repository.save!
-  end
-end
-
-def example_repository(uri : String = "https://github.com/place-labs/backoffice-release")
+def example_repository(
+  uri : String = "https://github.com/placeos/backoffice",
+  branch : String = "master"
+)
   existing = PlaceOS::Model::Repository.where(folder_name: "backoffice").first?
   if existing
-    unless existing.uri == uri
+    unless existing.uri == uri && existing.branch == branch
       existing.uri = uri
+      existing.branch = branch
       existing.save!
     end
 
@@ -56,6 +40,7 @@ def example_repository(uri : String = "https://github.com/place-labs/backoffice-
     repository.uri = uri
     repository.name = "Backoffice"
     repository.folder_name = "backoffice"
+    repository.branch = branch
     repository.save!
   end
 end
