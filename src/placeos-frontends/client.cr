@@ -133,8 +133,7 @@ module PlaceOS::Frontends
       # When working with endpoint that provide stream responses these may be accessed as available
       # by calling `#body_io` on the yielded response object.
       #
-      # The response status will be automatically checked and a Core::ClientErrror raised if
-      # unsuccessful.
+      # The response status will be automatically checked and a Core::ClientError raised if unsuccessful.
       private def {{method.id}}(path, headers : HTTP::Headers? = nil, body : HTTP::Client::BodyType = nil)
         connection.{{method.id}}(path, headers, body) do |response|
           raise ClientError.from_response("#{@uri}#{path}", response) unless response.success?
