@@ -21,8 +21,6 @@ module PlaceOS::Frontends
     class_getter instance : Loader do
       Loader.new(
         content_directory: settings.content_directory,
-        username: settings.username,
-        password: settings.password,
       )
     end
 
@@ -34,9 +32,7 @@ module PlaceOS::Frontends
 
     def initialize(
       @content_directory : String = Loader.settings.content_directory,
-      @update_crontab : String = Loader.settings.update_crontab,
-      @username : String? = Loader.settings.username,
-      @password : String? = Loader.settings.password
+      @update_crontab : String = Loader.settings.update_crontab
     )
       super()
     end
@@ -59,8 +55,8 @@ module PlaceOS::Frontends
         repository_folder_name: content_directory,
         repository_uri: "https://github.com/PlaceOS/www-core",
         content_directory: content_directory_parent,
-        username: username,
-        password: password,
+        username: Loader.settings.username,
+        password: Loader.settings.password,
         branch: "master",
         depth: 1,
       )
@@ -100,8 +96,6 @@ module PlaceOS::Frontends
         Loader.load(
           repository: repository,
           content_directory: @content_directory,
-          username: @username,
-          password: @password,
         )
       in Action::Deleted
         # Unload the repository
@@ -117,10 +111,10 @@ module PlaceOS::Frontends
 
     def self.load(
       repository : Model::Repository,
-      content_directory : String,
-      username : String? = nil,
-      password : String? = nil
+      content_directory : String
     )
+      username = repository.username || Loader.settings.username
+      password = repository.password || Loader.settings.password
       repository_commit = repository.commit_hash
       content_directory = File.expand_path(content_directory)
       repository_directory = File.expand_path(File.join(content_directory, repository.folder_name))
