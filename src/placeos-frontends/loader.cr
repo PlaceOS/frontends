@@ -88,7 +88,7 @@ module PlaceOS::Frontends
       repository = resource
 
       # Only consider Interface Repositories
-      return Resource::Result::Skipped unless repository.repo_type == Model::Repository::Type::Interface
+      return Resource::Result::Skipped unless repository.repo_type.interface?
 
       case action
       in Action::Created, Action::Updated
