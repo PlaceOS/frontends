@@ -33,7 +33,7 @@ module PlaceOS::Frontends
       Dir.exists?(expected_path).should be_true
 
       repository.destroy
-      sleep 0.5
+      sleep 10.milliseconds
 
       Dir.exists?(expected_path).should be_false
 
@@ -92,6 +92,7 @@ module PlaceOS::Frontends
         repository.save!
 
         after_load = loader.processed.size
+
         while loader.processed.size == after_load
           Fiber.yield
         end
