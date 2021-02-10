@@ -134,8 +134,10 @@ module PlaceOS::Frontends
         branch: repository.branch,
       )
 
+      hash = repository.should_pull? ? "HEAD" : repository.commit_hash
+
       # Checkout repository to commit on the model
-      checkout_commit(repository_directory, repository_commit, repository.branch)
+      checkout_commit(repository_directory, hash, repository.branch)
 
       # Grab commit for the cloned/pulled repository
       current_commit = current_commit(repository_directory: repository_directory)
