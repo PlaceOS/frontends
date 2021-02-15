@@ -124,6 +124,9 @@ module PlaceOS::Frontends
         unload(repository, content_directory)
       end
 
+      # Grab commit for the cloned/pulled repository
+      previous_commit = current_commit(repository_directory: repository_directory) rescue nil
+
       # Clone and pull the repository
       clone_and_pull(
         repository_folder_name: repository.folder_name,
@@ -140,24 +143,31 @@ module PlaceOS::Frontends
       checkout_commit(repository_directory, hash, repository.branch)
 
       # Grab commit for the cloned/pulled repository
-      current_commit = current_commit(repository_directory: repository_directory)
+      checked_out_commit = current_commit(repository_directory: repository_directory)
 
       # Update model commit if the repository is not held at HEAD
-      if current_commit != repository_commit && repository_commit != "HEAD"
-        Log.info { {message:           "updating commit on Repository document",
-                    current_commit:    current_commit,
-                    repository_commit: repository_commit,
-                    folder_name:       repository.folder_name,
-        } }
+      unless checked_out_commit == repository_commit
+        if repository_commit != "HEAD"
+          Log.info { {
+            message:           "updating commit on Repository document",
+            current_commit:    checked_out_commit,
+            repository_commit: repository_commit,
+            folder_name:       repository.folder_name,
+          } }
 
-        # Refresh the repository model commit hash
-        repository_commit = current_commit
-        repository.update_fields(commit_hash: current_commit)
+          # Refresh the repository's `commit_hash`
+          repository_commit = checked_out_commit
+          repository.commit_hash = checked_out_commit
+        elsif checked_out_commit != previous_commit
+          # Update `updated_at` timestamp field.
+          repository.updated_at_will_change!
+        end
+        repository.update
       end
 
       Log.info { {
         message:           "loaded repository",
-        commit:            current_commit,
+        commit:            checked_out_commit,
         branch:            repository.branch,
         repository:        repository.folder_name,
         repository_commit: repository_commit,
