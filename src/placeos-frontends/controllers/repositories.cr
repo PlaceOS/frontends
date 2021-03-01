@@ -58,7 +58,7 @@ module PlaceOS::Frontends::Api
           ExecFrom.exec_from(path, "git", {"fetch", "--all"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
           result = ExecFrom.exec_from(path, "git", {"branch", "-r"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
           if result[:exit_code] == 0
-            result[:output].to_s.lines.map(&.strip.lchop("origin/")).sort.uniq.reject(/HEAD/)
+            result[:output].to_s.lines.map!(&.strip.lchop("origin/")).sort!.uniq!.reject!(/HEAD/)
           end
         end
       end

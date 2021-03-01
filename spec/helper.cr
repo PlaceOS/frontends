@@ -14,9 +14,7 @@ end
 
 Spec.after_suite { reset }
 
-PlaceOS::Frontends::Loader.configure do |settings|
-  settings.content_directory = TEST_DIR
-end
+PlaceOS::Frontends::Loader.configure &.content_directory=(TEST_DIR)
 
 def reset
   FileUtils.rm_rf(TEST_DIR)
