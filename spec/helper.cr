@@ -1,4 +1,5 @@
 require "file_utils"
+require "placeos-log-backend"
 require "placeos-models/spec/generator"
 
 require "../src/placeos-frontends"
@@ -8,7 +9,7 @@ require "spec"
 TEST_DIR = "test-www"
 
 Spec.before_suite do
-  Log.builder.bind "*", Log::Severity::Debug, PlaceOS::Frontends::LOG_BACKEND
+  Log.builder.bind "*", Log::Severity::Debug, PlaceOS::LogBackend.log_backend
   reset
 end
 

@@ -1,11 +1,10 @@
-require "action-controller/logger"
-require "secrets-env"
 require "log_helper"
+require "placeos-log-backend"
+require "secrets-env"
 
 module PlaceOS::Frontends
-  LOG_BACKEND = ActionController.default_backend
-  APP_NAME    = "PlaceOS Frontend Loader"
-  VERSION     = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  APP_NAME = "frontends"
+  VERSION  = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
 
   PROD = ENV["ENV"]? == "production"
 

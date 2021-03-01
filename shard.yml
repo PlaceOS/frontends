@@ -16,6 +16,9 @@ dependencies:
     github: placeos/models
     version: ~> 4.0
 
+  placeos-log-backend:
+    github: place-labs/log-backend
+
   placeos-resource:
     github: place-labs/resource
     version: ~> 1
