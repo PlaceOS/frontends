@@ -1,4 +1,4 @@
-FROM crystallang/crystal:0.36.1-alpine as builder
+FROM crystallang/crystal:1.0.0-alpine as builder
 
 WORKDIR /build
 
@@ -6,9 +6,10 @@ COPY shard.yml .
 COPY shard.override.yml .
 COPY shard.lock .
 
-RUN CRFLAGS="--static" shards install --production --static --release
+RUN CRFLAGS="--static" shards install --production --ignore-crystal-version
 
 COPY src /build/src
+
 RUN crystal build --error-trace --static --release --no-debug -o bin/frontends src/app.cr
 
 FROM alpine:3.11
