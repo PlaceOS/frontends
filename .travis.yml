@@ -1,14 +1,12 @@
 language: crystal
-
-service:
-  - docker
+service: docker
 
 before_install:
-  # Add rethinkdb 2.3.6
-  - docker run --net="host" -p "29015:29015" -p "28015:28015" -d rethinkdb:2.4
+  # Add rethinkdb 2.4
+  - docker run -p 29015:29015 -p 28015:28015 -d rethinkdb:2.4
 
 install:
-  - shards install
+  - shards install --ignore-crystal-version
 
 script:
   - crystal spec -v --error-trace
