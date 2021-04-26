@@ -15,10 +15,10 @@ RUN crystal build --error-trace --static --release --no-debug -o bin/frontends s
 FROM alpine:3.11
 WORKDIR /app
 
-# Add trusted CAs for communicating with external services
-RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
+RUN apk add --no-cache ca-certificates git openssh tzdata
 
-RUN apk add --no-cache git openssh
+# Add trusted CAs for communicating with external services
+RUN update-ca-certificates
 
 COPY --from=builder /build/bin /app/bin
 
