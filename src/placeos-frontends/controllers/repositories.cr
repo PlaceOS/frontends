@@ -57,8 +57,13 @@ module PlaceOS::Frontends::Api
         Git.repo_operation(path) do
           ExecFrom.exec_from(path, "git", {"fetch", "--all"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
           result = ExecFrom.exec_from(path, "git", {"branch", "-r"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
-          if result[:exit_code] == 0
-            result[:output].to_s.lines.map!(&.strip.lchop("origin/")).sort!.uniq!.reject!(/HEAD/)
+          if result[:exit_code].zero?
+            result[:output]
+              .to_s
+              .lines
+              .compact_map { |l| l.strip.lchop("origin/") unless l =~ /HEAD/ }
+              .sort!
+              .uniq!
           end
         end
       end
