@@ -3,10 +3,11 @@ require "./helper"
 module PlaceOS::Frontends
   describe Loader do
     repository = example_repository
+    expected_path = File.join(TEST_DIR, repository.folder_name)
 
     Spec.before_each do
-      reset
       repository = example_repository
+      reset
     end
 
     it "implicity loads www base" do
@@ -17,90 +18,75 @@ module PlaceOS::Frontends
       loader.stop
     end
 
-    it "loads frontends" do
-      loader = Loader.new.start
+    context "processing Repository" do
+      loader = Loader.new
 
-      Dir.exists?(File.join(TEST_DIR, repository.folder_name)).should be_true
+      successfully_created = loader.process_resource(:created, repository).success?
+      repo_exists = Dir.exists?(expected_path)
 
-      loader.stop
-    end
+      successfully_deleted = loader.process_resource(:deleted, repository).success?
+      repo_does_not_exist = !Dir.exists?(expected_path)
 
-    it "removes frontends" do
-      loader = Loader.new.start
+      it "loads frontends" do
+        successfully_created.should be_true
+        repo_exists.should be_true
+      end
 
-      expected_path = File.join(TEST_DIR, repository.folder_name)
-
-      Dir.exists?(expected_path).should be_true
-
-      repository.destroy
-      sleep 10.milliseconds
-
-      Dir.exists?(expected_path).should be_false
-
-      loader.stop
+      it "removes frontends" do
+        successfully_deleted.should be_true
+        repo_does_not_exist.should be_true
+      end
     end
 
     it "supports changing a uri" do
-      loader = Loader.new.start
+      loader = Loader.new
 
-      expected_path = File.join(TEST_DIR, repository.folder_name)
       expected_uri = "https://github.com/place-labs/backoffice-alpha"
 
+      loader.process_resource(:created, repository).success?.should be_true
       Dir.exists?(expected_path).should be_true
 
+      repository.clear_changes_information
       repository.uri = expected_uri
-      repository.save!
-      after_load = loader.processed.size
-      while loader.processed.size == after_load
-        Fiber.yield
-      end
+      loader.process_resource(:updated, repository).success?.should be_true
 
       Dir.exists?(expected_path).should be_true
+
       url = ExecFrom.exec_from(expected_path, "git", {"remote", "get-url", "origin"})[:output].to_s
-
       url.strip.should end_with("backoffice-alpha")
-
-      loader.stop
     end
 
     describe "branches" do
       it "loads a specific branch" do
+        loader = Loader.new
+
         branch = "build-alpha"
-        repository = example_repository(branch: branch)
+        repository.branch = branch
 
-        loader = Loader.new.start
-        path = File.join(TEST_DIR, "backoffice")
+        loader.process_resource(:created, repository).success?.should be_true
+        Dir.exists?(expected_path).should be_true
 
-        Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq branch
-
-        loader.stop
+        Compiler::GitCommands.current_branch(expected_path).should eq branch
       end
 
       it "switches branches" do
+        loader = Loader.new
+
         branch = "build-alpha"
         updated_branch = "master"
-        repository = example_repository(branch: branch)
 
-        loader = Loader.new.start
-        path = File.join(TEST_DIR, "backoffice")
+        repository.branch = branch
 
-        Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq branch
+        loader.process_resource(:created, repository).success?.should be_true
+        Dir.exists?(expected_path).should be_true
+        Compiler::GitCommands.current_branch(expected_path).should eq branch
 
+        repository.clear_changes_information
         repository.branch = updated_branch
-        repository.save!
 
-        after_load = loader.processed.size
-
-        while loader.processed.size == after_load
-          Fiber.yield
-        end
-
-        Dir.exists?(path).should be_true
-        Compiler::GitCommands.current_branch(path).should eq updated_branch
-
-        loader.stop
+        loader.process_resource(:updated, repository).success?.should be_true
+        Dir.exists?(expected_path).should be_true
+        Compiler::GitCommands.current_branch(expected_path).should eq updated_branch
       end
     end
   end
