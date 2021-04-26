@@ -1,12 +1,5 @@
 #! /usr/bin/env bash
-
 set -e
-
-echo '### `crystal tool format --check`'
-crystal tool format --check
-
-echo '### `ameba`'
-crystal lib/ameba/bin/ameba.cr
 
 watch="false"
 multithreaded="false"
