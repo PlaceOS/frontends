@@ -25,6 +25,7 @@ services:
       - rethink
     environment:
       # Environment
+      GITHUB_ACTION: ${GITHUB_ACTION-}
       <<: *deployment-env
       # Service Hosts
       <<: *rethinkdb-client-env
