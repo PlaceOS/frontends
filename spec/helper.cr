@@ -30,7 +30,6 @@ def example_repository(
     unless existing.uri == uri && existing.branch == branch
       existing.uri = uri
       existing.branch = branch
-      existing.save!
     end
 
     existing
@@ -40,6 +39,6 @@ def example_repository(
     repository.name = "Backoffice"
     repository.folder_name = "backoffice"
     repository.branch = branch
-    repository.save!
+    repository
   end
 end
