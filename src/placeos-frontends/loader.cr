@@ -158,8 +158,8 @@ module PlaceOS::Frontends
           # Refresh the repository's `commit_hash`
           repository_commit = checked_out_commit
           repository.commit_hash = checked_out_commit
-        elsif checked_out_commit != previous_commit
-          # Update `updated_at` timestamp field.
+        elsif checked_out_commit != previous_commit && (repository.updated_at - Time.utc) >= 1.minutes
+          # Update `updated_at` timestamp field if commit on disk changed, and more than a minute elapsed since last pull
           repository.updated_at_will_change!
         end
         repository.update
