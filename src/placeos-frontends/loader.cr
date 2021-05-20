@@ -62,7 +62,7 @@ module PlaceOS::Frontends
       )
     end
 
-    protected def start_update_cron
+    protected def start_update_cron : Nil
       unless self.update_cron
         # Update the repositories periodically
         self.update_cron = Tasker.instance.cron(update_crontab) do
@@ -124,9 +124,6 @@ module PlaceOS::Frontends
         unload(repository, content_directory)
       end
 
-      # Grab commit for the cloned/pulled repository
-      previous_commit = current_commit(repository_directory: repository_directory) rescue nil
-
       # Clone and pull the repository
       clone_and_pull(
         repository_folder_name: repository.folder_name,
@@ -158,9 +155,6 @@ module PlaceOS::Frontends
           # Refresh the repository's `commit_hash`
           repository_commit = checked_out_commit
           repository.commit_hash = checked_out_commit
-        elsif checked_out_commit != previous_commit && (repository.updated_at - Time.utc) >= 1.minutes
-          # Update `updated_at` timestamp field if commit on disk changed, and more than a minute elapsed since last pull
-          repository.updated_at_will_change!
         end
         repository.update
       end
