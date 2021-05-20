@@ -1,12 +1,12 @@
-require "log_helper"
-require "placeos-log-backend"
 require "secrets-env"
 
 module PlaceOS::Frontends
   APP_NAME = "frontends"
   VERSION  = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
 
-  PROD = ENV["ENV"]? == "production"
+  PROD = (ENV["SG_ENV"]? || ENV["ENV"]?) == "production"
+
+  class_getter? production : Bool = PROD
 
   # defaults used in `./app.cr`
   HOST = ENV["PLACE_LOADER_HOST"]? || "127.0.0.1"

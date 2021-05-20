@@ -1,5 +1,5 @@
 name: placeos-frontends
-version: 0.11.1
+version: 0.11.2
 crystal: ~> 1.0
 license: MIT
 authors:
@@ -10,6 +10,10 @@ targets:
     main: src/app.cr
 
 dependencies:
+  action-controller:
+    github: spider-gazelle/action-controller
+    version: ~> 4.4
+
   placeos-compiler:
     github: placeos/compiler
     version: ~> 3.0
