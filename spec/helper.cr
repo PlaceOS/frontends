@@ -1,8 +1,9 @@
 require "file_utils"
 require "placeos-log-backend"
 require "placeos-models/spec/generator"
-
 require "../src/placeos-frontends"
+require "../lib/action-controller/spec/curl_context"
+require "action-controller/server"
 
 require "spec"
 
@@ -12,6 +13,11 @@ Spec.before_suite do
   Log.builder.bind "*", Log::Severity::Debug, PlaceOS::LogBackend.log_backend
   reset
 end
+
+ActionController::Server.before(
+  ActionController::ErrorHandler.new(PlaceOS::Frontends::PROD, ["X-Request-ID"]),
+  ActionController::LogHandler.new(ms: true)
+)
 
 Spec.after_suite { reset }
 

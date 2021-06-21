@@ -1,4 +1,5 @@
 FROM crystallang/crystal:1.0.0-alpine as builder
+ARG PLACE_COMMIT="DEV"
 
 WORKDIR /build
 
@@ -10,7 +11,8 @@ RUN CRFLAGS="--static" shards install --production --ignore-crystal-version
 
 COPY src /build/src
 
-RUN crystal build --error-trace --static --release --no-debug -o bin/frontends src/app.cr
+RUN PLACE_COMMIT=$PLACE_COMMIT \
+  crystal build --release --no-debug --error-trace -o bin/frontends src/app.cr
 
 FROM alpine:3.11
 WORKDIR /app

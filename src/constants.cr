@@ -1,8 +1,10 @@
 require "secrets-env"
 
 module PlaceOS::Frontends
-  APP_NAME = "frontends"
-  VERSION  = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  APP_NAME     = "frontends"
+  VERSION      = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  BUILD_TIME   = {{ system("date -u").stringify }}
+  BUILD_COMMIT = {{ env("PLACE_COMMIT") || "DEV" }}
 
   PROD = (ENV["SG_ENV"]? || ENV["ENV"]?) == "production"
 
