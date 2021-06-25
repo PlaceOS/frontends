@@ -14,11 +14,6 @@ Spec.before_suite do
   reset
 end
 
-ActionController::Server.before(
-  ActionController::ErrorHandler.new(PlaceOS::Frontends::PROD, ["X-Request-ID"]),
-  ActionController::LogHandler.new(ms: true)
-)
-
 Spec.after_suite { reset }
 
 PlaceOS::Frontends::Loader.configure &.content_directory=(TEST_DIR)
