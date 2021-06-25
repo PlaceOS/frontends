@@ -1,8 +1,9 @@
 require "file_utils"
 require "placeos-log-backend"
 require "placeos-models/spec/generator"
-
 require "../src/placeos-frontends"
+require "../lib/action-controller/spec/curl_context"
+require "action-controller/server"
 
 require "spec"
 

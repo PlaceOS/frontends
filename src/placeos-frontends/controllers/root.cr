@@ -1,5 +1,7 @@
 require "./base"
 
+require "placeos-models/version"
+
 module PlaceOS::Frontends::Api
   class Root < Base
     base "/api/frontends/v1"
@@ -9,9 +11,12 @@ module PlaceOS::Frontends::Api
     end
 
     get "/version", :version do
-      render :ok, json: {
-        version: VERSION.to_s,
-      }
+      render :ok, json: PlaceOS::Model::Version.new(
+        version: VERSION,
+        build_time: BUILD_TIME,
+        commit: BUILD_COMMIT,
+        service: APP_NAME
+      )
     end
   end
 end

@@ -60,6 +60,10 @@ module PlaceOS::Frontends
       Array(String).from_json(response.body)
     end
 
+    def version : PlaceOS::Model::Version
+      Model::Version.from_json(get("/version").body)
+    end
+
     ###########################################################################
 
     def initialize(
