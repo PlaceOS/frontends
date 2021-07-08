@@ -1,4 +1,4 @@
-require "placeos-compiler/git_commands"
+require "placeos-compiler/git"
 
 require "./base"
 require "../loader"
@@ -8,15 +8,18 @@ module PlaceOS::Frontends::Api
     base "/api/frontends/v1/repositories"
     Log = ::Log.for(self)
 
-    private alias Git = PlaceOS::Compiler::GitCommands
+    # :nodoc:
+    alias Git = PlaceOS::Compiler::Git
 
     class_property loader : Loader = Loader.instance
+
+    getter loader : Loader { self.class.loader }
 
     # Returns an array of commits for a repository
     get "/:folder_name/commits", :commits do
       count = (params["count"]? || 50).to_i
       folder_name = params["folder_name"]
-      commits = Repositories.commits?(folder_name, count)
+      commits = Git.repository_commits(folder_name, loader.content_directory, count) rescue nil
       head :not_found if commits.nil?
 
       render json: commits
@@ -25,7 +28,7 @@ module PlaceOS::Frontends::Api
     # Returns an array of branches for a repository
     get "/:folder_name/branches", :branches do
       folder_name = params["folder_name"]
-      branches = Repositories.branches?(folder_name)
+      branches = Git.branches(folder_name, loader.content_directory) rescue nil
       head :not_found if branches.nil?
 
       render json: branches
@@ -47,33 +50,8 @@ module PlaceOS::Frontends::Api
           File.directory?(path) && File.exists?(File.join(path, ".git"))
         }
         .each_with_object({} of String => String) { |folder_name, hash|
-          hash[folder_name] = Loader.current_commit(repository_directory: folder_name, content_directory: content_directory)
+          hash[folder_name] = Compiler::Git.current_repository_commit(folder_name, content_directory)
         }
-    end
-
-    def self.branches?(folder_name : String) : Array(String)?
-      path = File.expand_path(File.join(loader.content_directory, folder_name))
-      if Dir.exists?(path)
-        Git.repo_operation(path) do
-          ExecFrom.exec_from(path, "git", {"fetch", "--all"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
-          result = ExecFrom.exec_from(path, "git", {"branch", "-r"}, environment: {"GIT_TERMINAL_PROMPT" => "0"})
-          if result[:exit_code].zero?
-            result[:output]
-              .to_s
-              .lines
-              .compact_map { |l| l.strip.lchop("origin/") unless l =~ /HEAD/ }
-              .sort!
-              .uniq!
-          end
-        end
-      end
-    end
-
-    def self.commits?(folder_name : String, count : Int32 = 50) : Array(NamedTuple(commit: String, date: String, author: String, subject: String))?
-      path = File.expand_path(File.join(loader.content_directory, folder_name))
-      if Dir.exists?(path)
-        Git.repository_commits(path, count)
-      end
     end
   end
 end

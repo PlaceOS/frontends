@@ -52,7 +52,7 @@ module PlaceOS::Frontends
 
       Dir.exists?(expected_path).should be_true
 
-      url = ExecFrom.exec_from(expected_path, "git", {"remote", "get-url", "origin"})[:output].to_s
+      url = ExecFrom.exec_from(expected_path, "git", {"remote", "get-url", "origin"}).output.to_s
       url.strip.should end_with("backoffice-alpha")
     end
 
@@ -66,7 +66,7 @@ module PlaceOS::Frontends
         loader.process_resource(:created, repository).success?.should be_true
         Dir.exists?(expected_path).should be_true
 
-        Compiler::GitCommands.current_branch(expected_path).should eq branch
+        Compiler::Git.current_branch(expected_path).should eq branch
       end
 
       it "switches branches" do
@@ -79,14 +79,14 @@ module PlaceOS::Frontends
 
         loader.process_resource(:created, repository).success?.should be_true
         Dir.exists?(expected_path).should be_true
-        Compiler::GitCommands.current_branch(expected_path).should eq branch
+        Compiler::Git.current_branch(expected_path).should eq branch
 
         repository.clear_changes_information
         repository.branch = updated_branch
 
         loader.process_resource(:updated, repository).success?.should be_true
         Dir.exists?(expected_path).should be_true
-        Compiler::GitCommands.current_branch(expected_path).should eq updated_branch
+        Compiler::Git.current_branch(expected_path).should eq updated_branch
       end
     end
   end

@@ -4,23 +4,25 @@ module PlaceOS::Frontends::Api
   describe Repositories do
     it "lists commits for a loaded repository" do
       repository = example_repository
-      Api::Repositories.loader = Loader.new.start
-      commits = Api::Repositories.commits?(repository.folder_name)
+      loader = Loader.new.start
+      Api::Repositories.loader = loader
+      commits = Compiler::Git.repository_commits(repository.folder_name, loader.content_directory) rescue nil
       commits.should_not be_nil
-      commits.not_nil!.size.should be > 0
-      Api::Repositories.loader.stop
+      commits.not_nil!.should_not be_empty
+      loader.stop
     end
 
     it "lists branches for a loaded repository" do
       repository = example_repository
-      Api::Repositories.loader = Loader.new.start
+      loader = Loader.new.start
+      Api::Repositories.loader = loader
 
-      branches = Api::Repositories.branches?(repository.folder_name)
+      branches = Compiler::Git.branches(repository.folder_name, loader.content_directory) rescue nil
       branches.should_not be_nil
       branches = branches.not_nil!
-      branches.size.should be > 0
+      branches.should_not be_empty
       branches.should contain("master")
-      Api::Repositories.loader.stop
+      loader.stop
     end
 
     it "lists current commit for all loaded repositories" do
