@@ -18,6 +18,8 @@ docker-compose pull
 
 docker-compose build
 
-docker-compose run --rm frontends /app/entrypoint.sh "$@"
+docker-compose run --rm test /app/entrypoint.sh "$@" || exit_code="$?"
 
 docker-compose down
+
+exit ${exit_code}

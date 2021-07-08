@@ -13,11 +13,10 @@ x-rethinkdb-client-env: &rethinkdb-client-env
   RETHINKDB_DB: ${RETHINKDB_DB:-place_development}
 
 services:
-  frontends: # Frontends
+  test: # Frontends
     build:
       context: ./
       dockerfile: Dockerfile.test
-    hostname: frontends
     volumes:
       - ./spec:/app/spec
       - ./src:/app/src
