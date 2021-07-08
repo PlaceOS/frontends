@@ -16,7 +16,7 @@ dependencies:
 
   placeos-compiler:
     github: placeos/compiler
-    version: ~> 3.0
+    version: ~> 4.0
 
   placeos-models:
     github: placeos/models
