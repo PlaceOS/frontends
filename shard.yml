@@ -28,7 +28,7 @@ dependencies:
 
   placeos-resource:
     github: place-labs/resource
-    version: ~> 1
+    version: ~> 2
 
   secrets-env:
     github: place-labs/secrets-env
