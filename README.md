@@ -1,6 +1,8 @@
 # PlaceOS Frontends Service
 
-[![Build Status](https://travis-ci.com/PlaceOS/frontends.svg?token=tDypQH5g9ptvYso68jVV&branch=master)](https://travis-ci.com/PlaceOS/frontends)
+[![Build Dev Image](https://github.com/PlaceOS/frontends/actions/workflows/build-dev-image.yml/badge.svg)](https://github.com/PlaceOS/frontends/actions/workflows/build-dev-image.yml)
+[![CI](https://github.com/PlaceOS/frontends/actions/workflows/ci.yml/badge.svg)](https://github.com/PlaceOS/frontends/actions/workflows/ci.yml)
+
 ![suprisingly, a frontend loader!](./logo.svg)
 
 An application Intended to be a sidecar to a webserver that listens for published front-end repositories and clones them to the webserver's static folder.
